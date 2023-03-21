@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from controller.user import router, idp
+
+from src.controller.user import router, idp
 
 load_dotenv()
 app = FastAPI()

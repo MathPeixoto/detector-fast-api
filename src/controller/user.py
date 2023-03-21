@@ -3,7 +3,7 @@ from fastapi import Depends
 from fastapi.responses import RedirectResponse
 from fastapi_keycloak import OIDCUser
 
-from conf.keycloak import config_keycloak
+from src.conf.keycloak import config_keycloak
 
 router = APIRouter()
 idp = config_keycloak()

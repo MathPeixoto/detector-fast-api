@@ -1,4 +1,4 @@
-from controller.user import root
+from src.controller.user import root
 
 
 class TestUser:
