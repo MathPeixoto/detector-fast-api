@@ -3,3 +3,5 @@ pydantic
 uvicorn
 fastapi_keycloak
 python-dotenv
+pytest
+coverage

@@ -8,13 +8,14 @@ from conf.keycloak import config_keycloak
 router = APIRouter()
 idp = config_keycloak()
 
+
 @router.get("/")  # Unprotected
 def root():
     return 'Hello World'
 
 
-@router.get("/user")  # Requires logged in
-def current_users(user: OIDCUser = Depends(idp.get_current_user())):
+@router.get("/user")  # Requires to be logged in
+def current_users(user: OIDCUser = Depends(idp.get_current_user())) -> OIDCUser:
     return user
 
 

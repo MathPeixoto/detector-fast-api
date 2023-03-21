@@ -1,8 +1,8 @@
 from .config import settings
 from fastapi_keycloak import FastAPIKeycloak
 
-def config_keycloak():
 
+def config_keycloak():
     return FastAPIKeycloak(
         server_url=settings["KEYCLOAK_SERVER_URL"],
         client_id=settings["KEYCLOAK_CLIENT_ID"],
