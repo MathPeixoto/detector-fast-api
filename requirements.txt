@@ -1,0 +1,5 @@
+FastAPI[all]
+pydantic
+uvicorn
+fastapi_keycloak
+python-dotenv
