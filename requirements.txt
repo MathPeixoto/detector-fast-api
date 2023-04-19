@@ -1,7 +1,11 @@
-FastAPI[all]
-pydantic
+FastAPI[all]==0.95.1
+pydantic==1.10.7
 uvicorn
-fastapi_keycloak
+pyjwt
+requests
 python-dotenv
-pytest
-coverage
+pytest==7.3.1
+coverage==7.2.3
+cryptography
+python-jose
+mangum

@@ -1,10 +1,12 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from src.controller.user import router, idp
+from lib.mangum.adapter import Mangum
+from src.controller.user import router
 
 load_dotenv()
 app = FastAPI()
-idp.add_swagger_config(app)
 
-app.include_router(router, prefix="/user")
+handler = Mangum(app)
+
+app.include_router(router, prefix="/v1")

@@ -1,12 +1,9 @@
 from fastapi import APIRouter
 from fastapi import Depends
-from fastapi.responses import RedirectResponse
-from fastapi_keycloak import OIDCUser
 
-from src.conf.keycloak import config_keycloak
+from src.conf.cognito import get_current_user, is_admin
 
 router = APIRouter()
-idp = config_keycloak()
 
 
 @router.get("/")  # Unprotected
@@ -15,20 +12,10 @@ def root():
 
 
 @router.get("/user")  # Requires to be logged in
-def current_users(user: OIDCUser = Depends(idp.get_current_user())) -> OIDCUser:
-    return user
+def current_users(current_user=Depends(get_current_user)):
+    return {"message": "This is a protected route for any authenticated user", "user": current_user}
 
 
-@router.get("/admin")  # Requires the admin role
-def company_admin(user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))):
-    return f'Hi admin {user}'
-
-
-@router.get("/login")
-def login_redirect():
-    return RedirectResponse(idp.login_uri)
-
-
-@router.get("/callback")
-def callback(session_state: str, code: str):
-    return idp.exchange_authorization_code(session_state=session_state, code=code)  # This will return an access token
+@router.get("/admin")  # Requires to be logged in
+async def admin_route(current_user=Depends(is_admin)):
+    return {"message": "This is a protected route for admins only", "user": current_user}
