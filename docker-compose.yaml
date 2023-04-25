@@ -7,9 +7,3 @@ services:
       - '8081:8081'
     restart:
       always
-    networks:
-      - backend
-
-networks:
-  backend:
-    driver: bridge

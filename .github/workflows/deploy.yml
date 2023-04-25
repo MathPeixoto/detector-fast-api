@@ -30,9 +30,14 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
 
-      - name: Load secrets and save into app.env file
-        run: aws secretsmanager get-secret-value --secret-id detector --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)") |.[]' > app.env
+      - name: Create .env file if not present
+        run: |
+          if [ ! -f .env ]; then
+            touch .env
+          fi
 
+      - name: Load secrets and save into .env file
+        run: aws secretsmanager get-secret-value --secret-id detector --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)") |.[]' > .env
 
       - name: Build, tag, and push docker image to Amazon ECR
         env:

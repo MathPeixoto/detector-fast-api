@@ -1,6 +1,0 @@
-# Test your FastAPI endpoints
-
-GET http://localhost:8081/user/
-Accept: application/json
-
-###
