@@ -110,6 +110,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+packages/
 lib64/
 parts/
 sdist/

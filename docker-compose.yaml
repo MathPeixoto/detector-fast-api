@@ -1,62 +1,14 @@
 version: '3'
 
 services:
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_DB: testkeycloakdb
-      POSTGRES_USER: testkeycloakuser
-      POSTGRES_PASSWORD: testkeycloakpassword
-    restart:
-      always
-    networks:
-      - backend
-
-  keycloak:
-    image: jboss/keycloak:16.1.0
-    volumes:
-      - ./realm-export.json:/opt/jboss/keycloak/imports/realm-export.json
-    command:
-      - "-b 0.0.0.0 -Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.import=/opt/jboss/keycloak/imports/realm-export.json"
-    environment:
-      DB_VENDOR: POSTGRES
-      DB_ADDR: postgres
-      DB_DATABASE: testkeycloakdb
-      DB_USER: testkeycloakuser
-      DB_SCHEMA: public
-      DB_PASSWORD: testkeycloakpassword
-      KEYCLOAK_USER: keycloakuser
-      KEYCLOAK_PASSWORD: keycloakpassword
-      PROXY_ADDRESS_FORWARDING: "true"
-      KEYCLOAK_LOGLEVEL: DEBUG
+  api:
+    image: 'detector:latest'
     ports:
-      - '8085:8080'
-    depends_on:
-      - postgres
+      - '8081:8081'
     restart:
       always
     networks:
       - backend
-
-#  api:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    ports:
-#      - '8081:8081'
-#    depends_on:
-#      - keycloak
-#    restart:
-#      always
-#    networks:
-#      - backend
-#    environment:
-#      KEYCLOAK_SERVER_URL: "http://keycloak:8080/auth"
-#      KEYCLOAK_CLIENT_ID: "test-client"
-#      KEYCLOAK_CLIENT_SECRET: "GzgACcJzhzQ4j8kWhmhazt7WSdxDVUyE"
-#      KEYCLOAK_ADMIN_CLIENT_SECRET: "BIcczGsZ6I8W5zf0rZg5qSexlloQLPKB"
-#      KEYCLOAK_REALM: "Test"
-#      KEYCLOAK_CALLBACK_URI: "http://localhost:8081/user/callback"
 
 networks:
   backend:
