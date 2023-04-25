@@ -1,11 +1,11 @@
 FastAPI[all]==0.95.1
 pydantic==1.10.7
 uvicorn
-pyjwt
-requests
-python-dotenv
+pyjwt==2.6.0
+requests~=2.28.2
+python-dotenv~=1.0.0
 pytest==7.3.1
 coverage==7.2.3
-cryptography
+cryptography==40.0.2
 python-jose
-mangum
+boto3==1.26.119
