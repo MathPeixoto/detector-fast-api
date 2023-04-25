@@ -50,4 +50,4 @@ jobs:
       - name: Update ECS service with new task definition
         run: |
           TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition fargate-detector-td --query "taskDefinition.taskDefinitionArn" --output text)
-          aws ecs update-service --cluster ecs-fargate-cluster --service detector-service --task-definition $TASK_DEFINITION --force-new-deployment
+          aws ecs update-service --cluster ecs-fargate-cluster --service ecs-detector-service --task-definition $TASK_DEFINITION --force-new-deployment
