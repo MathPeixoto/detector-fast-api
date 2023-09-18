@@ -8,10 +8,11 @@ import tempfile
 
 class VideoDetector(ImageDetector):
 
-    def __init__(self):
+    def __init__(self, filename):
         super().__init__()
         self.writer = None
         self.frame = None
+        self.filename = filename
 
     def run(self, video):
         f = 0
@@ -40,7 +41,7 @@ class VideoDetector(ImageDetector):
 
         end = time.time()
 
-        print(f'Processment took {end - start:.5f} seconds')
+        print(f'Processing took {end - start:.5f} seconds')
 
         self.video.release()
         self.writer.release()
@@ -48,7 +49,7 @@ class VideoDetector(ImageDetector):
     def write_video(self, processed_frame):
         if self.writer is None:
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            self.writer = cv2.VideoWriter('videos/result-traffic-cars.mp4', fourcc, 30,
+            self.writer = cv2.VideoWriter('videos/' + self.filename, fourcc, 30,
                                      (processed_frame.shape[1], processed_frame.shape[0]), True)
         self.writer.write(processed_frame)
 
