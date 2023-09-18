@@ -16,8 +16,9 @@ async def upload_file(file: UploadFile = File(...), current_user=Depends(get_cur
     processor = ImageDetector()
     image = file.file.read()
     img_processed = processor.run(image)
+    file_processed = processor.nparray_to_bytes(img_processed)
 
-    upload_successful = await s3_service.upload_file_to_s3(img_processed)
+    upload_successful = await s3_service.upload_file_to_s3(file_processed, current_user["username"], file.filename)
     if upload_successful:
         return {
             "filename": file.filename,
@@ -37,12 +38,12 @@ async def process_video(file: UploadFile = File(...), current_user=Depends(get_c
     video = file.file.read()
     video_processed = processor.run(video)
 
-    # upload_successful = await s3_service.upload_file_to_s3(video_processed)
-    # if upload_successful:
-    return {
-        "filename": file.filename,
-        "content_type": file.content_type,
-        "message": "Processamento iniciado com sucesso"
-    }
-    # else:
-    #     return {"message": "Processamento não iniciado"}
+    upload_successful = await s3_service.upload_file_to_s3(video_processed, file.filename)
+    if upload_successful:
+        return {
+            "filename": file.filename,
+            "content_type": file.content_type,
+            "message": "Processamento iniciado com sucesso"
+        }
+    else:
+        return {"message": "Processamento não iniciado"}

@@ -18,11 +18,11 @@ class VideoDetector(ImageDetector):
 
         tfile = tempfile.NamedTemporaryFile(delete=False)
         tfile.write(video)
-
         self.video = cv2.VideoCapture(tfile.name)
 
         total_frames = int(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
 
+        start = time.time()
         while True:
             ret, frame = self.video.read()
             self.frame = frame
@@ -30,29 +30,30 @@ class VideoDetector(ImageDetector):
             if not ret:
                 break
 
-            start = time.time()
-            self.frame = super().run(frame)
-            end = time.time()
+            processed_frame = super().run(frame)
 
             f += 1
 
-            self.write_video()
+            self.write_video(processed_frame)
 
-            print('Frame number {0} took {1:.5f} seconds'.format(f, end - start))
-            print('Frame number {0} / {1}'.format(f, total_frames))
+            print(f'Frame number {f} / {total_frames}')
+
+        end = time.time()
+
+        print(f'Processment took {end - start:.5f} seconds')
 
         self.video.release()
         self.writer.release()
 
-    def write_video(self):
+    def write_video(self, processed_frame):
         if self.writer is None:
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-
             self.writer = cv2.VideoWriter('videos/result-traffic-cars.mp4', fourcc, 30,
-                                     (self.frame.shape[1], self.frame.shape[0]), True)
-        self.writer.write(self.frame)
+                                     (processed_frame.shape[1], processed_frame.shape[0]), True)
+        self.writer.write(processed_frame)
 
     def load_image(self):
+        self.image_bgr = self.frame[:, :, :3]
+
         if self.width is None or self.height is None:
-            self.image_bgr = self.frame[:, :, :3]
             self.height, self.width = self.frame.shape[:2]

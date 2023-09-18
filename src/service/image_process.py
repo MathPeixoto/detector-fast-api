@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
+from io import BytesIO
 
 import cv2
 import numpy as np
@@ -90,6 +91,10 @@ class ImageDetector:
         cv2.destroyWindow('Detections')
 
     def run(self, image):
+        self.class_numbers.clear()
+        self.confidences.clear()
+        self.bounding_boxes.clear()
+
         self.image = image
         self.load_image()
         self.create_blob()
@@ -98,4 +103,16 @@ class ImageDetector:
 
         self.get_bounding_boxes(output_from_network)
         self.non_maximum_suppression()
-        return self.draw_boxes()
+        boxes = self.draw_boxes()
+        return boxes
+
+    def nparray_to_bytes(self, nparray):
+        is_success, buffer = cv2.imencode(".png", nparray)
+        if is_success:
+            print("Image converted successfully into the Byte Array")
+            
+            io_buffer = BytesIO(buffer)
+            return io_buffer
+        else:
+            print("Error converting image into the Byte Array")
+            return None
