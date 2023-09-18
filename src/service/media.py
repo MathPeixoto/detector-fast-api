@@ -42,3 +42,40 @@ class S3Service:
         except Exception as e:
             print(e)
             return False
+
+    async def download_file_from_s3(self, sub_folder: str, file_name: str):
+        try:
+            url = self.s3_client.generate_presigned_url(
+                'get_object',
+                Params={
+                    'Bucket': self.bucket_name,
+                    'Key': f"{sub_folder}/{file_name}"
+                },
+                ExpiresIn=3600  # URL expires in 1 hour
+            )
+            return url
+        except NoCredentialsError:
+            return False
+        except Exception as e:
+            print(e)
+            return False
+
+    async def view_files_from_s3(self, sub_folder: str):
+        try:
+            response = self.s3_client.list_objects(Bucket=self.bucket_name, Prefix=sub_folder)
+
+            # Check if the 'Contents' key exists in the response
+            if 'Contents' in response:
+                # Extract only the 'Key' field for each file
+                files = [content['Key'].replace(f"{sub_folder}/", "", 1) for content in response['Contents']]
+            else:
+                files = []
+
+            return files
+        except NoCredentialsError:
+            return False
+        except Exception as e:
+            print(e)
+            return False
+
+
