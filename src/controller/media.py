@@ -1,4 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, Depends
+from fastapi import BackgroundTasks
 
 from src.conf.cognito import get_current_user
 from src.service.image_process import ImageDetector
@@ -9,34 +10,33 @@ media_router = APIRouter()
 
 
 @media_router.post("/detect/image")
-async def upload_file(file: UploadFile = File(...), current_user=Depends(get_current_user)):
+async def upload_file(
+        background_tasks: BackgroundTasks,
+        file: UploadFile = File(...),
+        current_user=Depends(get_current_user)):
     s3_service = S3Service()
     print(f"user: {current_user}")
 
-    processor = ImageDetector()
-    image = file.file.read()
-    img_processed = processor.run(image)
-    file_processed = processor.nparray_to_bytes(img_processed)
+    def process_and_upload():
+        processor = ImageDetector()
+        image = file.file.read()
+        img_processed = processor.run(image)
+        file_processed = processor.nparray_to_bytes(img_processed)
 
-    upload_successful = await s3_service.upload_file_to_s3(file_processed, current_user["username"], file.filename)
-    if upload_successful:
-        return {
-            "filename": file.filename,
-            "content_type": file.content_type,
-            "message": "Processamento iniciado com sucesso"
-        }
-    else:
-        return {"message": "Processamento não iniciado"}
+        upload_successful = s3_service.upload_file_to_s3(file_processed, current_user["username"], file.filename)
+        if upload_successful:
+            print("Image uploaded to S3 successfully")
 
+    background_tasks.add_task(process_and_upload)
+    return {"message": "Processamento iniciado com sucesso"}
 
-from fastapi import BackgroundTasks
 
 @media_router.post("/detect/video")
 async def process_video(
         background_tasks: BackgroundTasks,
         file: UploadFile = File(...),
         current_user=Depends(get_current_user)
-    ):
+):
     s3_service = S3Service()
     print(f"user: {current_user}")
 
