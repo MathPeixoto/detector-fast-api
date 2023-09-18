@@ -25,7 +25,7 @@ class S3Service:
             print(e)
             return False
 
-    async def upload_video_to_s3(self, sub_folder: str, file_name: str):
+    def upload_video_to_s3(self, sub_folder: str, file_name: str):
         try:
             # Step 1: Read the video file from the local disk
             video_path = "videos/" + file_name

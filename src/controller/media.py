@@ -1,11 +1,8 @@
-import io
-
 from fastapi import APIRouter, UploadFile, File, Depends
-from starlette.responses import StreamingResponse
 
 from src.conf.cognito import get_current_user
-from src.service.media import S3Service
 from src.service.image_process import ImageDetector
+from src.service.media import S3Service
 from src.service.video_process import VideoDetector
 
 media_router = APIRouter()
@@ -32,24 +29,27 @@ async def upload_file(file: UploadFile = File(...), current_user=Depends(get_cur
         return {"message": "Processamento não iniciado"}
 
 
+from fastapi import BackgroundTasks
+
 @media_router.post("/detect/video")
-async def process_video(file: UploadFile = File(...), current_user=Depends(get_current_user)):
+async def process_video(
+        background_tasks: BackgroundTasks,
+        file: UploadFile = File(...),
+        current_user=Depends(get_current_user)
+    ):
     s3_service = S3Service()
     print(f"user: {current_user}")
 
-    processor = VideoDetector(file.filename)
-    video = file.file.read()
-    processor.run(video)
+    def process_and_upload():
+        processor = VideoDetector(file.filename)
+        video = file.file.read()
+        processor.run(video)
+        upload_successful = s3_service.upload_video_to_s3(current_user["username"], file.filename)
+        if upload_successful:
+            print("Video uploaded to S3 successfully")
 
-    upload_successful = await s3_service.upload_video_to_s3(current_user["username"], file.filename)
-    if upload_successful:
-        return {
-            "filename": file.filename,
-            "content_type": file.content_type,
-            "message": "Processamento iniciado com sucesso"
-        }
-    else:
-        return {"message": "Processamento não iniciado"}
+    background_tasks.add_task(process_and_upload)
+    return {"message": "Processamento iniciado com sucesso"}
 
 
 @media_router.get("/download/{filename}")
