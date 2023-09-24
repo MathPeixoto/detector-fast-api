@@ -8,7 +8,7 @@ from src.service.yolo_v4 import YOLOObjectDetection
 
 
 class ImageDetector:
-    def __init__(self, detector=YOLOObjectDetection()):
+    def __init__(self, detector=None):
         self.class_numbers = []
         self.confidences = []
         self.bounding_boxes = []
@@ -21,7 +21,7 @@ class ImageDetector:
         self.probability_minimum = 0.7
         self.threshold = 0.4
 
-        self.detector = detector
+        self.detector = detector or YOLOObjectDetection()
 
         self.load_labels()
 
@@ -69,7 +69,7 @@ class ImageDetector:
 
     def draw_single_box(self, index):
         x_min, y_min, box_width, box_height = self.bounding_boxes[index]
-        color = self.colors[self.class_numbers[index]].tolist()
+        color = list(self.colors[self.class_numbers[index]])
 
         top_left = (x_min, y_min)
         bottom_right = (x_min + box_width, y_min + box_height)
@@ -83,12 +83,6 @@ class ImageDetector:
             for i in self.results.flatten():
                 self.draw_single_box(i)
         return self.image_bgr
-
-    def show_image(self):
-        cv2.namedWindow('Detections', cv2.WINDOW_NORMAL)
-        cv2.imshow('Detections', self.image_bgr)
-        cv2.waitKey(0)
-        cv2.destroyWindow('Detections')
 
     def run(self, image):
         self.class_numbers.clear()
