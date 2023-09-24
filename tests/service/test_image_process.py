@@ -95,7 +95,7 @@ class TestImageDetector(unittest.TestCase):
         # Given
         index = 0
         self.detector.bounding_boxes = [[1, 2, 3, 4]]
-        self.detector.colors = [[255, 0, 0]]
+        self.detector.colors = np.array([[255, 0, 0]])
         self.detector.class_numbers = [0]
         self.detector.labels = ['label']
         self.detector.confidences = [0.9]
@@ -105,8 +105,8 @@ class TestImageDetector(unittest.TestCase):
         self.detector.draw_single_box(index)
 
         # Then
-        mock_rectangle.assert_called()
-        mock_put_text.assert_called()
+        mock_rectangle.assert_called_once()
+        mock_put_text.assert_called_once()
 
     @patch.object(ImageDetector, 'draw_single_box')
     def test_draw_boxes(self, mock_draw_single_box):

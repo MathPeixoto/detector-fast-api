@@ -69,7 +69,7 @@ class ImageDetector:
 
     def draw_single_box(self, index):
         x_min, y_min, box_width, box_height = self.bounding_boxes[index]
-        color = list(self.colors[self.class_numbers[index]])
+        color = self.colors[self.class_numbers[index]].tolist()
 
         top_left = (x_min, y_min)
         bottom_right = (x_min + box_width, y_min + box_height)
