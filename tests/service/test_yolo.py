@@ -25,11 +25,11 @@ class TestYOLOObjectDetection(unittest.TestCase):
 
     @patch.object(YOLOObjectDetection, 'load_network')
     @patch('cv2.dnn.readNetFromDarknet')
-    def test_forward_pass(self, mock_readNetFromDarknet, mock_load_network):
+    def test_forward_pass(self, mock_read_net_from_darknet, mock_load_network):
         mock_net = MagicMock()
         mock_output = "mock_output"
         mock_net.forward.return_value = mock_output
-        mock_readNetFromDarknet.return_value = mock_net
+        mock_read_net_from_darknet.return_value = mock_net
 
         blob = np.zeros((1, 3, 416, 416), dtype=np.float32)
 
