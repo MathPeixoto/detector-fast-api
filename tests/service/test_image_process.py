@@ -151,7 +151,3 @@ class TestImageDetector(unittest.TestCase):
 
         # Then
         assert isinstance(result, BytesIO)  # Assuming you want to check that the result is a BytesIO object
-
-
-if __name__ == '__main__':
-    unittest.main()
