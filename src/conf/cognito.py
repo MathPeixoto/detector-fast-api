@@ -17,6 +17,7 @@ from src.conf.config import settings
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
+
 class CognitoAuth:
     def __init__(self):
         self.app_client_id = settings["APP_CLIENT_ID"]
